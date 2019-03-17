@@ -1,0 +1,100 @@
+// graph_dfs_bfs_btree.cpp : 定义控制台应用程序的入口点。
+//
+
+#include "stdafx.h"
+#include <stdlib.h>
+
+struct node {
+	int vertex;
+	struct node *nextnode;
+};
+typedef struct node *graph;
+struct node head[9];
+int visited[9];
+
+/**
+ * create the graph with edges array
+ */
+void creategraph(int *node, int num)
+{
+	graph newnode;
+	graph ptr;
+	int   from;
+	int   to;
+	int   i;
+
+	for (i = 0; i < num; i++) {
+		from = node[i*2];
+		to = node[i*2+1];
+		newnode = (graph)malloc(sizeof(struct node) );
+		newnode->vertex = to;
+		newnode->nextnode = NULL;
+		ptr = &(head[from]);
+		while (ptr->nextnode != NULL) {
+			ptr = ptr->nextnode;
+		}
+		ptr->nextnode = newnode;
+	}
+}
+
+/**
+ * deep first search
+ */
+void dfs(int current)
+{
+	graph ptr;
+
+	visited[current] = 1;
+	printf("vertex[%d] ", current);
+	ptr = head[current].nextnode;
+	while (ptr != NULL) {
+		if (visited[ptr->vertex] == 0) {
+			dfs(ptr->vertex);
+		}
+		ptr = ptr->nextnode;
+	}
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	graph ptr;
+	int node[20][2] = { // edges array
+		{1, 2}, {2, 1},
+		{1, 3}, {3, 1},
+		{2, 4}, {4, 2},
+		{2, 5}, {5, 2},
+		{3, 6}, {6, 3},
+		{3, 7}, {7, 3},
+		{4, 8}, {8, 4},
+		{5, 8}, {8, 5},
+		{6, 8}, {8, 6},
+		{7, 8}, {8, 7},
+	};
+
+	int i;
+
+	for (i = 1; i <= 8; i++) {
+		head[i].vertex = i;
+		head[i].nextnode = NULL;
+		visited[i] = 0;
+	}
+
+	creategraph(&node[0][0], 20);
+
+	printf("the graph's adjacence list is: \n");
+	for (i = 1; i <= 8; i++) {
+		printf("vertex%d => ", head[i].vertex);
+		ptr = head[i].nextnode;
+		while (ptr != NULL) {
+			printf(" %d  ", ptr->vertex);
+			ptr = ptr->nextnode;
+		}
+		printf("\n");
+	}
+
+	printf("the deepth first search of the graph: \n");
+	dfs(1);
+	printf("\n");
+
+	return 0;
+}
