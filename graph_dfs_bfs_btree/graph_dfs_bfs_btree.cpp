@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include <stdlib.h>
 
+#define MAXQUEUE	10
+
 struct node {
 	int vertex;
 	struct node *nextnode;
@@ -11,6 +13,10 @@ struct node {
 typedef struct node *graph;
 struct node head[9];
 int visited[9];
+
+int queue[MAXQUEUE];
+int front = -1;
+int rear  = -1;
 
 /**
  * create the graph with edges array
@@ -55,6 +61,56 @@ void dfs(int current)
 	}
 }
 
+/**
+ * put into the queue
+ */
+void enqueue(int value)
+{
+	if (front >= MAXQUEUE) {
+		return ;
+	}
+
+	rear++;
+	queue[rear] = value;
+}
+
+/**
+ * take from the queue
+ */
+int dequeue()
+{
+	if (front == rear) {
+		return -1;
+	}
+
+	front++;
+	return queue[front];
+}
+
+/**
+ * breadth first search
+ */
+void bfs(int current)
+{
+	graph ptr;
+
+	enqueue(current);
+	visited[current] = 1;
+	printf("vertex[%d] ", current);
+	while (front != rear) {
+		current = dequeue();
+		ptr = head[current].nextnode;
+		while (ptr != NULL) {
+			if (visited[ptr->vertex] == 0) {
+				enqueue(ptr->vertex);
+				visited[ptr->vertex] = 1;
+				printf("vertex[%d] ", ptr->vertex);
+			}
+			ptr = ptr->nextnode;
+		}
+	}
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	graph ptr;
@@ -92,8 +148,12 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("\n");
 	}
 
-	printf("the deepth first search of the graph: \n");
-	dfs(1);
+	//printf("the deepth first search of the graph: \n");
+	//dfs(1);
+	//printf("\n");
+
+	printf("the breadth first search of the graph: \n");
+	bfs(1);
 	printf("\n");
 
 	return 0;
