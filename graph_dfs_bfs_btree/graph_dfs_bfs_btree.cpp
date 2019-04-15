@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include <stdlib.h>
+#include <cstdlib>
 
 #define MAXQUEUE	10
 
@@ -62,6 +62,27 @@ void dfs(int current)
 }
 
 /**
+ * span the tree with dfs alorgithm
+ */
+void spantree_dfs(int current, int pre)
+{
+	graph ptr;
+
+	visited[current] = 1;
+	if (pre != 0) {
+		printf("tree branch: from vertex[%d] to vertex[%d]\n", pre, current);
+	}
+	
+	ptr = head[current].nextnode;
+	while (ptr != NULL) {
+		if (visited[ptr->vertex] == 0) {
+			spantree_dfs(ptr->vertex, current);
+		}
+		ptr = ptr->nextnode;
+	}
+}
+
+/**
  * put into the queue
  */
 void enqueue(int value)
@@ -111,7 +132,31 @@ void bfs(int current)
 	}
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+/**
+ * span the tree with bfs alorigthm
+ */
+void spantree_bfs(int current)
+{
+	graph ptr;
+
+	enqueue(current);
+	visited[current] = 1;
+	while (front != rear) {
+		current = dequeue();
+		ptr = head[current].nextnode;
+		while (ptr != NULL) {
+			if (visited[ptr->vertex] == 0) {
+				enqueue(ptr->vertex);
+				visited[ptr->vertex] = 1;
+				printf("tree branch: from vertex[%d] to vertex[%d]\n", current, ptr->vertex);
+			}
+			ptr = ptr->nextnode;
+		}
+	}
+}
+
+//int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	graph ptr;
 	int node[20][2] = { // edges array
@@ -148,12 +193,14 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("\n");
 	}
 
-	//printf("the deepth first search of the graph: \n");
-	//dfs(1);
-	//printf("\n");
+	/*printf("the deepth first search of the graph: \n");
+	dfs(1);
+	spantree_dfs(1, 0);
+	printf("\n");*/
 
 	printf("the breadth first search of the graph: \n");
-	bfs(1);
+	//bfs(1);
+	spantree_bfs(1);
 	printf("\n");
 
 	return 0;
